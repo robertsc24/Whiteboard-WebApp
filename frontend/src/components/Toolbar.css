@@ -1,0 +1,20 @@
+.toolbar {
+  padding: 10px;
+  background-color: #f1f1f1;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  justify-content: start;
+  gap: 10px;
+}
+
+.toolbar button {
+  padding: 8px 15px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.toolbar button:hover {
+  background-color: #e7e7e7;
+}
