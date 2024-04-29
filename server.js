@@ -21,8 +21,11 @@ mongoose.connect('mongodb+srv://robertsc:!!Milwaukee2022@whiteboard.jhwunrk.mong
 app.use(express.json());
 
 // Routes
-const authRoutes = require('./routes/authRoutes'); // Ensure the path is correct based on your directory structure
-app.use('/auth', authRoutes); // Use the authentication routes under a specific path for better structure
+const authRoutes = require('./routes/authRoutes'); 
+app.use('/auth', authRoutes); 
+const adminRoutes = require('./routes/adminRoutes'); 
+app.use('/admin', adminRoutes);
+
 
 // WebSocket handling
 io.on('connection', (socket) => {

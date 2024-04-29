@@ -1,12 +1,14 @@
 import React from 'react';
-import './Toolbar.css';
+import './Toolbar.css'; 
+import { Link } from 'react-router-dom';
 
-function Toolbar() {
+
+function Toolbar({ isErasing, setIsErasing }) {
   return (
     <div className="toolbar">
-      <button>Pen</button>
-      <button>Eraser</button>
-      {/* Add more tools as needed */}
+      <button onClick={() => setIsErasing(false)}>Pen</button>
+      <button onClick={() => setIsErasing(true)}>Eraser</button>
+      <Link to="/login" className="toolbar-login">Login</Link>
     </div>
   );
 }

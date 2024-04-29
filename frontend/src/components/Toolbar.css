@@ -1,20 +1,49 @@
+/* Toolbar.css */
 .toolbar {
   padding: 10px;
-  background-color: #f1f1f1;
-  border-bottom: 1px solid #ccc;
-  display: flex;
-  justify-content: start;
-  gap: 10px;
+  background-color: #ececec; /* A light grey background */
+  border-bottom: 1px solid #d3d3d3; /* A border to separate the toolbar from the content below */
+  display: flex; /* Use flexbox for layout */
+  justify-content: center; /* Center the buttons in the toolbar */
+  gap: 10px; /* Put some space between the buttons */
 }
 
 .toolbar button {
-  padding: 8px 15px;
-  border: 1px solid #ccc;
-  background-color: #fff;
-  cursor: pointer;
-  transition: background-color 0.3s;
+  padding: 8px 15px; /* Add some padding around the text in the buttons */
+  border: 1px solid #c0c0c0; /* A subtle border around the buttons */
+  background-color: #fff; /* A white background for the buttons */
+  cursor: pointer; /* Change the mouse cursor to a pointer when hovering over the buttons */
+  outline: none; /* Remove the default focus outline from buttons */
+  font-size: 16px; /* Set the font size for the text inside the buttons */
+  border-radius: 4px; /* Slightly round the corners of the buttons */
+  transition: background-color 0.3s; /* Animate the background color when interacting with the button */
 }
 
 .toolbar button:hover {
-  background-color: #e7e7e7;
+  background-color: #e0e0e0; /* Change the background color on hover */
 }
+
+.toolbar button.active {
+  background-color: #b0bec5; /* A different background color to indicate the active tool */
+  border-color: #78909c; /* A different border color to stand out */
+}
+
+.toolbar-login {
+  padding: 8px 15px;
+  border: 1px solid #c0c0c0;
+  background-color: #fff;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 4px;
+  text-decoration: none; /* Removes the default underline from links */
+  color: black; /* Sets the text color */
+  display: inline-block; /* Allows padding and margins to be set */
+  margin: 0 5px; /* Adds space around the buttons */
+  transition: background-color 0.3s;
+}
+
+.toolbar-login:hover {
+  background-color: #e0e0e0;
+}
+
+

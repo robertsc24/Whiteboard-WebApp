@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const User = require('../models/User'); // Adjust the path as necessary
+const User = require('../models/User'); 
 
 // User registration
 router.post('/register', async (req, res) => {
