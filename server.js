@@ -1,5 +1,4 @@
-require('dotenv').config();  // Ensure this is at the top to load environment variables first
-
+require('dotenv').config(); 
 
 const express = require('express');
 const http = require('http');
@@ -7,7 +6,12 @@ const socketIo = require('socket.io');
 const mongoose = require('mongoose');
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server);
+const io = socketIo(server, {
+  cors: {
+    origin: "*", 
+    methods: ["GET", "POST"]
+  }
+});
 const PORT = process.env.PORT || 3000;
 
 // Connect to MongoDB
@@ -21,15 +25,21 @@ mongoose.connect('mongodb+srv://robertsc:!!Milwaukee2022@whiteboard.jhwunrk.mong
 app.use(express.json());
 
 // Routes
-const authRoutes = require('./routes/authRoutes'); 
-app.use('/auth', authRoutes); 
-const adminRoutes = require('./routes/adminRoutes'); 
+const authRoutes = require('./routes/authRoutes');
+app.use('/auth', authRoutes);
+const adminRoutes = require('./routes/adminRoutes');
 app.use('/admin', adminRoutes);
-
 
 // WebSocket handling
 io.on('connection', (socket) => {
   console.log('New client connected');
+
+  // Handle drawing events
+  socket.on('drawing', (data) => {
+    // Broadcast drawing actions to all other clients
+    socket.broadcast.emit('drawing', data);
+  });
+
   socket.on('disconnect', () => {
     console.log('Client disconnected');
   });
@@ -37,7 +47,7 @@ io.on('connection', (socket) => {
 
 // A basic route for testing the server
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  res.send('Server is working!');
 });
 
 // Error Handling Middleware
@@ -50,4 +60,5 @@ app.use((err, req, res, next) => {
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
 

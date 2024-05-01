@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import io from 'socket.io-client';
 import './Board.css';
 
@@ -6,83 +6,89 @@ function Board({ isErasing }) {
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
   const socketRef = useRef(null);
+  const [isDrawing, setIsDrawing] = useState(false);
 
+  // Helper function to get mouse position relative to canvas
+  function getMousePos(canvas, evt) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: evt.clientX - rect.left,
+      y: evt.clientY - rect.top
+    };
+  }
+
+  // Setup canvas and WebSocket connection
   useEffect(() => {
     const canvas = canvasRef.current;
-    canvas.width = 800; // or 'window.innerWidth' for full width
-    canvas.height = 600; // or 'window.innerHeight' for full height
-    canvas.style.width = '100%';
-    canvas.style.height = '100%';
+    if (canvas) {
+      // This ensures the drawing buffer matches the displayed size.
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
 
-    const context = canvas.getContext('2d');
-    context.scale(1, 1);
-    context.lineCap = 'round';
-    context.strokeStyle = 'black';
-    context.lineWidth = 2;
-    contextRef.current = context;
+      const context = canvas.getContext('2d');
+      context.lineCap = 'round';
+      context.strokeStyle = 'black';
+      context.lineWidth = 2;
+      contextRef.current = context;
 
-    socketRef.current = io.connect('/');
-
-    socketRef.current.on('drawing', (data) => {
-      const { x, y, type, isErasing: isErase } = data;
-      context.globalCompositeOperation = isErase ? 'destination-out' : 'source-over';
-      context.lineWidth = isErase ? 10 : 2;
-      if (type === 'begin') {
+      socketRef.current = io.connect('/');
+      socketRef.current.on('drawing', (data) => {
+        const { x, y, type, isErasing: isErase } = data;
+        context.globalCompositeOperation = isErase ? 'destination-out' : 'source-over';
+        context.lineWidth = isErase ? 30 : 6;
         context.beginPath();
         context.moveTo(x, y);
-      } else if (type === 'draw') {
         context.lineTo(x, y);
         context.stroke();
-      }
-    });
+      });
 
-    return () => {
-      socketRef.current.disconnect();
-    };
+      return () => {
+        socketRef.current.disconnect();
+      };
+    }
   }, []);
 
+  
   const startDrawing = ({ nativeEvent }) => {
-    const { offsetX, offsetY } = nativeEvent;
-    contextRef.current.beginPath();
-    contextRef.current.moveTo(offsetX, offsetY);
-    socketRef.current.emit('begin', {
-      x: offsetX,
-      y: offsetY,
-      type: 'draw',
-      isErasing: isErasing,
+    const canvas = canvasRef.current;
+    const context = contextRef.current;
+    const { x, y } = getMousePos(canvas, nativeEvent);
+
+    context.beginPath();
+    context.moveTo(x, y);
+
+    // Set the correct operation mode for drawing or erasing
+    context.globalCompositeOperation = isErasing ? 'destination-out' : 'source-over';
+    context.lineWidth = isErasing ? 30 : 6; 
+
+    setIsDrawing(true);
+    socketRef.current.emit('drawing', {
+      x, y, type: 'begin', isErasing
     });
   };
 
   const draw = ({ nativeEvent }) => {
-    if (!contextRef.current) return;
-    const { offsetX, offsetY } = nativeEvent;
-    contextRef.current.lineTo(offsetX, offsetY);
-    contextRef.current.stroke();
+    if (!isDrawing) return;
+    const canvas = canvasRef.current;
+    const context = contextRef.current;
+    const { x, y } = getMousePos(canvas, nativeEvent);
+
+    context.lineTo(x, y);
+    context.stroke();
     socketRef.current.emit('drawing', {
-      x: offsetX,
-      y: offsetY,
-      type: 'draw',
-      isErasing: isErasing,
+      x, y, type: 'draw', isErasing
     });
   };
 
   const endDrawing = () => {
-    contextRef.current.closePath();
-    // Emit an event to end the drawing
+    const context = contextRef.current;
+    context.closePath();
+    setIsDrawing(false);
     socketRef.current.emit('drawing', {
-      type: 'end',
-      isErasing,
+      type: 'end', isErasing
     });
   };
-
-  // Adjust the context when isErasing changes
-  useEffect(() => {
-    if (contextRef.current) {
-      // In your draw and startDrawing functions
-      contextRef.current.globalCompositeOperation = isErasing ? 'destination-out' : 'source-over';
-      contextRef.current.strokeStyle = isErasing ? 'rgba(0,0,0,1)' : 'black'; 
-    }
-  }, [isErasing]);
 
   return (
     <canvas

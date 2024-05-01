@@ -4,7 +4,7 @@ import Board from './components/Board';
 import Toolbar from './components/Toolbar';
 import Login from './components/Login';
 import Register from './components/Register';
-import './AppRoutes.css'; // Assuming you have styles specific to routes
+import './AppRoutes.css'; 
 
 function AppRoutes() {
   const [isErasing, setIsErasing] = useState(false);
