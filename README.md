@@ -1,6 +1,6 @@
 # Whiteboard-WebApp
 
-## Intro:
+## Description:
 
 This Realtime Collaborative Whiteboard is a web application designed to facilitate interactive and dynamic collaboration across remote teams and educational environments. Using different modern web technologies, this application allows multiple users to draw, sketch, and write on a shared virtual whiteboard in real-time, enhancing communication and creative processes. Built with a Node.js backend and a React frontend, the application leverages WebSocket for real-time interactivity and MongoDB Atlas for data management in the cloud. It is containerized using Docker, ensuring easy deployment and scalability across different environments, and managed through Kubernetes to handle orchestration efficiently. This whiteboard tool not only supports standard drawing functionalities but also includes features such as user authentication and administrative controls for managing sessions and user interactions.
 
